@@ -1,0 +1,38 @@
+# Binaries
+/bin/
+/build/
+/dist/
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+
+# Go workspace file (Go 1.18+)
+go.work
+go.work.sum
+
+# Vendor directory (if not committed)
+vendor/
+
+# Dependency directories
+**/node_modules/
+
+# IDE/editor config
+.vscode/
+.idea/
+*.swp
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Local environment files
+.env
+.env.*
+!.env.example
