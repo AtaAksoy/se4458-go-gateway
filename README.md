@@ -1,13 +1,14 @@
 # SE4458 Go API Gateway
 
-Bu proje, Laravel tabanlı iki mikroservisi (App A - GSM Operator API, App B - ChatBot API) yöneten bir **API Gateway** servisidir. Go ile yazılmıştır ve tüm istemci istekleri bu gateway üzerinden yönlendirilir.
+Bu proje, Laravel tabanlı iki mikroservisi (App A - Auth API, App B - Job Posting API) yöneten bir **API Gateway** servisidir. Go ile yazılmıştır ve tüm istemci istekleri bu gateway üzerinden yönlendirilir.
 
 ## 🛠 Özellikler
 
 - Go (net/http + chi router)
 - Reverse Proxy mantığı
+- CORS desteği (localhost:5173 için)
 - `.env` ile yapılandırılabilir
-- App A ve App B isteklerini ayrı yönlendirir
+- Auth ve Job Posting isteklerini ayrı yönlendirir
 
 ---
 
@@ -15,7 +16,7 @@ Bu proje, Laravel tabanlı iki mikroservisi (App A - GSM Operator API, App B - C
 
 ```
 go-gateway/
-├── main.go             // Uygulama başlangıcı
+├── main.go             // Uygulama başlangıcı ve CORS middleware
 ├── handlers/
 │   └── proxy.go        // Reverse proxy logic
 ├── .env.example        // Örnek Ortam değişkenleri
@@ -30,11 +31,9 @@ go-gateway/
 ```env
 PORT=8080
 
-# Laravel App A (GSM Operator API)
-GSM_API_URL=
+AUTH_API_URL=
 
-# Laravel App B (ChatBot API)
-CHAT_API_URL=
+JOB_POSTING_API_URL=
 ```
 
 ---
@@ -60,29 +59,40 @@ Gateway şu adreste çalışır:
 
 ## 🧪 Kullanım
 
-### GSM API (App A):
+### Auth API (App A):
 
 ```http
-POST http://localhost:8080/gsm/api/v1/subscriber
+POST http://localhost:8080/auth/api/v1/login
 ```
 
-Bu istek doğrudan App A’ya yönlendirilir:
+Bu istek doğrudan Auth API'ye yönlendirilir.
 
-```
--> http://xellpay.test/api/v1/subscriber
-```
-
-### ChatBot API (App B):
+### Job Posting API (App B):
 
 ```http
-POST http://localhost:8080/chat/api/v1/chat
+GET http://localhost:8080/jobs/api/v1/jobs?page=1&limit=10
+POST http://localhost:8080/jobs/api/v1/jobs
 ```
 
-Bu istek de App B’ye yönlendirilir:
+Bu istekler Job Posting API'ye yönlendirilir.
 
+### Job Search API:
+
+```http
+GET http://localhost:8080/job-search/api/v1/jobs/search?q=keyword
 ```
--> http://se4458-chatapp.test/api/v1/chat
-```
+
+Bu istek de Job Posting API'nin search endpoint'ine yönlendirilir.
+
+---
+
+## 🌐 CORS Desteği
+
+Gateway, frontend uygulamalarından gelen istekleri desteklemek için CORS middleware'i içerir:
+
+- **İzin Verilen Origin:** `http://localhost:5173`
+- **İzin Verilen Metodlar:** GET, POST, PUT, DELETE, OPTIONS
+- **İzin Verilen Headers:** Content-Type, Authorization
 
 ---
 
